@@ -15,3 +15,5 @@ try:
 WindSpeed _MPH = pow(((Wind Volts - zeroWind_volts) /.2300, 2.7265)
 W = float (WindSpeed_ MPH*0.44764)
 except: W = None
+print(W)
+time.sleep(1)
