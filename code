@@ -1,0 +1,17 @@
+import time 
+import Adafruit_MCP3008
+TMP = 0
+RV = 1
+zeroWindAdjustment = 0
+mcp = Adafruit_MCP3008.MCP3008(clK=18, cs=25,miso=23,mosi=24)
+while True:
+TMP_ADunits = mcp. read__adc(TMP)
+Wind ADunits = mcp. read_adc(RV)
+Wind_Volts = (Wind_ADunits* 0.0048828125)
+TempCtimes100 = (0.005 * (float (TMP_ADunits) * float (TMP_ADunits)) - (16.862 * float(TMP_ADunits)) + 9075.4; 
+zerowind_Adunits = -0.0006 * (float (TMP_ADunits) * float (TMP_ADunits)) + 1.0727 * float(TMP_ADunits) + 47.172;
+zeroWind_volts = (zeroWind ADunits * 0.00488281251 -zerowindAdjustment
+try:
+WindSpeed _MPH = pow(((Wind Volts - zeroWind_volts) / .2300)
+W = float (WindSpeed_ MPH*0.44764)
+except: W = None
