@@ -25,7 +25,7 @@ def read_wind_speed():
 
     try:
         WindSpeed_MPH = pow((Wind_Volts - zeroWind_volts) / 0.2300, 2.7265)
-        WindSpeed_MPS = WindSpeed_MPH * 0.44704  
+        WindSpeed_MPS = WindSpeed_MPH * 0.03  
     except:
         WindSpeed_MPS = None
 
@@ -46,4 +46,4 @@ while True:
     else:
         print("Failed to calculate wind speed")
 
-    time.sleep(20)  
+    time.sleep(5)
