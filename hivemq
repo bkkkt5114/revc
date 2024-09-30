@@ -18,9 +18,9 @@ zeroWindAdjustment = 0.2
 # MQTT設置
 MQTT_HOST = "3d5c05f2e8f64cc2b069dc51547be0fe.s1.eu.hivemq.cloud"
 MQTT_PORT = 8883
-MQTT_USER = "your_hivemq_username"
-MQTT_PASS = "your_hivemq_password"
-MQTT_TOPIC = "wind/speed"
+MQTT_USER = "bkkkt"
+MQTT_PASS = "Asdfg1798102"
+MQTT_TOPIC = "topic/revc"
 
 client = mqtt.Client()
 client.username_pw_set(MQTT_USER, MQTT_PASS)
@@ -37,7 +37,7 @@ def read_wind_speed():
     
     try:
         WindSpeed_MPH = math.pow((Wind_Volts - zeroWind_volts) / 0.2300, 2.7265)
-        WindSpeed_mps = WindSpeed_MPH * 0.44704
+        WindSpeed_mps = WindSpeed_MPH * 0.03
     except:
         WindSpeed_mps = None
     
@@ -49,3 +49,4 @@ while True:
         client.publish(MQTT_TOPIC, wind_speed)
         print("Published Wind Speed (m/s):", wind_speed)
     time.sleep(5)
+
