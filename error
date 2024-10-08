@@ -2,3 +2,29 @@ Traceback (most recent call last):
   File "/home/pi/modbus.py", line 4, in <module>
     from pymodbus.server.sync import StartTcpServer
 ModuleNotFoundError: No module named 'pymodbus.server.sync'
+
+
+Published Wind Speed (m/s): 0.34
+Traceback (most recent call last):
+  File "/home/pi/mmmodbus.py", line 75, in <module>
+    start_modbus_server()
+  File "/home/pi/mmmodbus.py", line 72, in start_modbus_server
+    StartTcpServer(context, address=(MODBUS_IP, MODBUS_PORT))
+  File "/home/pi/.local/lib/python3.9/site-packages/pymodbus/server/sync.py", line 620, in StartTcpServer
+    server = ModbusTcpServer(context, framer, identity, address, **kwargs)
+  File "/home/pi/.local/lib/python3.9/site-packages/pymodbus/server/sync.py", line 338, in __init__
+    socketserver.ThreadingTCPServer.__init__(self, self.address,
+  File "/usr/lib/python3.9/socketserver.py", line 452, in __init__
+    self.server_bind()
+  File "/usr/lib/python3.9/socketserver.py", line 466, in server_bind
+    self.socket.bind(self.server_address)
+PermissionError: [Errno 13] Permission denied
+Published Wind Speed (m/s): 0.27
+Published Wind Speed (m/s): 0.45
+Published Wind Speed (m/s): 0.26
+Published Wind Speed (m/s): 0.19
+^CException ignored in: <module 'threading' from '/usr/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/threading.py", line 1428, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
