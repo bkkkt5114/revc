@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/pi/modbus.py", line 4, in <module>
+    from pymodbus.server.sync import StartTcpServer
+ModuleNotFoundError: No module named 'pymodbus.server.sync'
