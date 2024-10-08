@@ -1,0 +1,75 @@
+import time
+import Adafruit_MCP3008
+import math
+from pymodbus.server.sync import StartTcpServer
+from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
+from pymodbus.payload import BinaryPayloadBuilder
+from pymodbus.constants import Endian
+from threading import Thread
+
+# MCP3008設置
+CLK = 18
+MISO = 23
+MOSI = 24
+CS = 25
+mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+
+# 定義風速計的模擬輸入管腳
+TMP = 0
+RV = 1
+zeroWindAdjustment = 0.2
+
+# Modbus TCP設置
+MODBUS_IP = "0.0.0.0"  # 伺服器的IP地址
+MODBUS_PORT = 502  # 默認Modbus TCP端口
+
+# 讀取風速計數據
+def read_wind_speed():
+    TMP_ADunits = mcp.read_adc(TMP)
+    Wind_ADunits = mcp.read_adc(RV)
+    Wind_Volts = Wind_ADunits * 0.0048828125
+    TempCtimes100 = (0.005 * (TMP_ADunits ** 2)) - (16.862 * TMP_ADunits) + 9075.4
+    zeroWind_ADunits = -0.0006 * (TMP_ADunits ** 2) + 1.0727 * TMP_ADunits + 47.172
+    zeroWind_volts = (zeroWind_ADunits * 0.0048828125) - zeroWindAdjustment
+    
+    try:
+        WindSpeed_MPH = math.pow((Wind_Volts - zeroWind_volts) / 0.2300, 2.7265)
+        WindSpeed_mps = WindSpeed_MPH * 0.03
+    except:
+        WindSpeed_mps = None
+    
+    return WindSpeed_mps
+
+# 定義Modbus資料庫（Holding Registers）
+store = ModbusSlaveContext(
+    hr=ModbusSequentialDataBlock(0, [0]*100)  # 100個保持寄存器
+)
+context = ModbusServerContext(slaves=store, single=True)
+
+# 更新Modbus寄存器的值
+def update_modbus_registers(context):
+    while True:
+        wind_speed = read_wind_speed()
+        if wind_speed is not None:
+            # 將風速值轉換成可以放入寄存器的格式
+            builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=Endian.Big)
+            builder.add_32bit_float(wind_speed)  # 使用32位浮點數表示風速
+            payload = builder.to_registers()
+
+            # 將風速數據寫入保持寄存器0
+            context[0].setValues(3, 0, payload)
+            print(f"Published Wind Speed (m/s): {wind_speed:.2f}")
+
+        time.sleep(5)  # 每5秒更新一次
+
+# 啟動Modbus伺服器
+def start_modbus_server():
+    # 使用背景執行緒來更新寄存器
+    updater_thread = Thread(target=update_modbus_registers, args=(context,))
+    updater_thread.start()
+
+    # 啟動Modbus TCP伺服器
+    StartTcpServer(context, address=(MODBUS_IP, MODBUS_PORT))
+
+if __name__ == "__main__":
+    start_modbus_server()
