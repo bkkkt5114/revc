@@ -32,4 +32,5 @@ KeyboardInterrupt:
 
 
 sudo netstat -tuln | grep 1502
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 
